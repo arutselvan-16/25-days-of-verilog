@@ -1,1 +1,608 @@
+Day 06 – Advanced Combinational Logic
 
+Overview
+
+Day 06 focused on advanced combinational circuit design and code conversion using Verilog HDL.
+
+The main topics covered were:
+
+Barrel Shifter
+
+Binary to Gray Code Conversion
+
+Gray to Binary Code Conversion
+
+BCD to 7-Segment Display
+
+Parity Generator
+
+Parity Checker
+
+Combinational RTL design
+
+Testbench development
+
+ModelSim simulation
+
+Waveform verification
+
+Each circuit was designed using Verilog HDL and a separate testbench was created for functional verification.
+
+Objectives
+
+Understand the working principle of a barrel shifter.
+
+Understand binary-to-Gray code conversion.
+
+Understand Gray-to-binary code conversion.
+
+Understand BCD representation.
+
+Understand seven-segment display decoding.
+
+Understand even parity generation.
+
+Understand parity error checking.
+
+Practice combinational RTL design.
+
+Write independent testbenches for each circuit.
+
+Verify designs using ModelSim waveforms.
+
+1. 4-bit Right Barrel Shifter
+
+A barrel shifter is a combinational circuit capable of shifting data by a variable number of positions.
+
+For this implementation, a 4-bit input can be shifted right by 0, 1, 2, or 3 positions.
+
+Inputs
+
+A[3:0] → Data input
+S[1:0] → Shift amount
+
+Output
+
+Y[3:0] → Shifted output
+
+Operation
+
+S[1:0]
+
+Operation
+
+00
+
+No shift
+
+01
+
+Right shift by 1
+
+10
+
+Right shift by 2
+
+11
+
+Right shift by 3
+
+The design uses the Verilog right-shift operator >>.
+
+Example
+
+For A = 1011:
+
+S = 00 → Y = 1011
+S = 01 → Y = 0101
+S = 10 → Y = 0010
+S = 11 → Y = 0001
+
+Files
+
+barrel_shifter_4bit.v
+barrel_shifter_4bit_tb.v
+
+2. Binary → Gray Code
+
+Gray code is a binary numbering system in which consecutive values differ by only one bit.
+
+For a 4-bit binary input B[3:0], the Gray output is G[3:0].
+
+Conversion Logic
+
+G[3] = B[3]
+G[2] = B[3] XOR B[2]
+G[1] = B[2] XOR B[1]
+G[0] = B[1] XOR B[0]
+
+Example
+
+Binary = 1101
+Gray   = 1011
+
+Files
+
+binary_to_gray.v
+binary_to_gray_tb.v
+
+3. Gray → Binary Code
+
+Gray-to-binary conversion converts a Gray-coded value back into its corresponding binary value.
+
+Conversion Logic
+
+B[3] = G[3]
+B[2] = B[3] XOR G[2]
+B[1] = B[2] XOR G[1]
+B[0] = B[1] XOR G[0]
+
+Example
+
+Gray   = 1011
+Binary = 1101
+
+Files
+
+gray_to_binary.v
+gray_to_binary_tb.v
+
+4. BCD → 7-Segment Display
+
+BCD stands for Binary Coded Decimal. Each decimal digit from 0 to 9 is represented using four binary bits.
+
+BCD Representation
+
+Decimal
+
+BCD
+
+0
+
+0000
+
+1
+
+0001
+
+2
+
+0010
+
+3
+
+0011
+
+4
+
+0100
+
+5
+
+0101
+
+6
+
+0110
+
+7
+
+0111
+
+8
+
+1000
+
+9
+
+1001
+
+The combinations 1010 to 1111 are invalid BCD inputs.
+
+Seven-Segment Display
+
+The seven segments are:
+
+      a
+     ---
+  f |   | b
+     -g-
+  e |   | c
+     ---
+      d
+
+The implementation uses the segment order abcdefg and follows the common-cathode convention:
+
+1 = Segment ON
+0 = Segment OFF
+
+Segment Mapping
+
+Decimal
+
+BCD
+
+abcdefg
+
+0
+
+0000
+
+1111110
+
+1
+
+0001
+
+0110000
+
+2
+
+0010
+
+1101101
+
+3
+
+0011
+
+1111001
+
+4
+
+0100
+
+0110011
+
+5
+
+0101
+
+1011011
+
+6
+
+0110
+
+1011111
+
+7
+
+0111
+
+1110000
+
+8
+
+1000
+
+1111111
+
+9
+
+1001
+
+1111011
+
+Invalid BCD inputs produce:
+
+0000000
+
+Files
+
+bcd_to_7segment.v
+bcd_to_7segment_tb.v
+
+5. Even Parity Generator
+
+A parity bit is an additional bit used for simple error detection.
+
+For this project, an even parity generator was implemented.
+
+The objective is:
+
+The total number of 1s in the data plus the parity bit must be even.
+
+Inputs
+
+D[3:0]
+
+Output
+
+P
+
+Logic
+
+P = D[3] XOR D[2] XOR D[1] XOR D[0]
+
+If the data contains an odd number of 1s, the parity bit becomes 1.
+
+If the data already contains an even number of 1s, the parity bit becomes 0.
+
+Examples
+
+Data
+
+Number of 1s
+
+P
+
+0000
+
+0
+
+0
+
+0001
+
+1
+
+1
+
+0011
+
+2
+
+0
+
+1101
+
+3
+
+1
+
+1111
+
+4
+
+0
+
+Files
+
+parity_generator.v
+parity_generator_tb.v
+
+6. Even Parity Checker
+
+A parity checker verifies whether the received data and parity bit satisfy the expected even-parity condition.
+
+Inputs
+
+D[3:0] → Data
+P      → Parity bit
+
+Output
+
+ERROR
+
+Logic
+
+ERROR = D[3] XOR D[2] XOR D[1] XOR D[0] XOR P
+
+Output Meaning
+
+ERROR = 0 → No parity error detected
+ERROR = 1 → Parity error detected
+
+Examples
+
+For:
+
+D = 1101
+P = 1
+
+there are four total 1s, therefore:
+
+ERROR = 0
+
+For:
+
+D = 1101
+P = 0
+
+there are three total 1s, therefore:
+
+ERROR = 1
+
+Files
+
+parity_checker.v
+parity_checker_tb.v
+
+Verilog Concepts Practiced
+
+Shift Operator
+
+The right-shift operator >> was used in the barrel shifter.
+
+XOR Operator
+
+The XOR operator ^ was used for:
+
+Binary → Gray conversion
+
+Gray → Binary conversion
+
+Parity generation
+
+Parity checking
+
+Case Statement
+
+The case statement was used for the barrel shifter and BCD-to-7-segment decoder.
+
+Combinational Logic
+
+All circuits were implemented as combinational logic using:
+
+always @(*)
+
+Testbench Verification
+
+A separate testbench was created for each Day 06 circuit.
+
+The testbenches were used to:
+
+Apply different input combinations
+
+Check expected outputs
+
+Test different shift amounts
+
+Test different code conversion values
+
+Test BCD values from 0 to 9
+
+Test invalid BCD inputs
+
+Test valid and erroneous parity conditions
+
+Observe output transitions
+
+Prepare designs for ModelSim waveform verification
+
+Common constructs used were:
+
+initial begin
+
+$monitor(...)
+
+#10;
+
+and:
+
+$finish;
+
+ModelSim Waveform Verification
+
+The following circuits were selected for waveform documentation:
+
+4-bit Right Barrel Shifter
+
+Binary → Gray
+
+BCD → 7-Segment
+
+Parity Generator
+
+Parity Checker
+
+Waveform Files
+
+barrel_shifter_4bit_waveform.png
+binary_to_gray_waveform.png
+bcd_to_7segment_waveform.png
+parity_generator_waveform.png
+parity_checker_waveform.png
+
+Gray → Binary is included as a complete RTL and testbench design, but a separate waveform screenshot is not required because the code-conversion concept is already represented through the Binary → Gray and Gray → Binary designs.
+
+Folder Structure
+
+Day-06/
+│
+├── README.md
+│
+├── barrel_shifter_4bit.v
+├── barrel_shifter_4bit_tb.v
+├── barrel_shifter_4bit_waveform.png
+│
+├── binary_to_gray.v
+├── binary_to_gray_tb.v
+├── binary_to_gray_waveform.png
+│
+├── gray_to_binary.v
+├── gray_to_binary_tb.v
+│
+├── bcd_to_7segment.v
+├── bcd_to_7segment_tb.v
+├── bcd_to_7segment_waveform.png
+│
+├── parity_generator.v
+├── parity_generator_tb.v
+├── parity_generator_waveform.png
+│
+├── parity_checker.v
+├── parity_checker_tb.v
+└── parity_checker_waveform.png
+
+Key Learning Outcomes
+
+By completing Day 06, I learned and practiced:
+
+Understanding barrel shifters
+
+Performing variable right shifts
+
+Understanding Gray code
+
+Converting binary to Gray code
+
+Converting Gray code back to binary
+
+Understanding BCD representation
+
+Designing a BCD-to-7-segment decoder
+
+Understanding seven-segment display encoding
+
+Understanding even parity
+
+Designing a parity generator
+
+Designing a parity checker
+
+Detecting parity errors using XOR
+
+Using shift operators in Verilog
+
+Using XOR operations in combinational RTL
+
+Using case statements
+
+Using always @(*)
+
+Writing separate RTL and testbench modules
+
+Verifying designs using ModelSim
+
+Analyzing simulation waveforms
+
+Tools Used
+
+Verilog HDL
+
+ModelSim
+
+GitHub
+
+Day 06 Summary
+
+Day 06 focused on advanced combinational logic, code conversion, display decoding, shifting, and basic error detection.
+
+The overall workflow followed was:
+
+Concept
+   ↓
+Logic / Truth Table
+   ↓
+RTL Design
+   ↓
+Testbench
+   ↓
+ModelSim Simulation
+   ↓
+Waveform Verification
+   ↓
+GitHub Documentation
+
+The six main circuits completed during Day 06 were:
+
+1. 4-bit Right Barrel Shifter
+2. Binary → Gray
+3. Gray → Binary
+4. BCD → 7-Segment
+5. Even Parity Generator
+6. Even Parity Checker
+
+Day 06 builds on the combinational RTL concepts from previous days and introduces practical applications of shifting, code conversion, display control, and error detection.
